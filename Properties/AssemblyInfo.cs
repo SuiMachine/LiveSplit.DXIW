@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 using LiveSplit.DXIW;
 using LiveSplit.UI.Components;
 
-[assembly: AssemblyTitle("LiveSplit.DXTF")]
+[assembly: AssemblyTitle("LiveSplit.DXIW")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("LiveSplit.DXTF")]
+[assembly: AssemblyProduct("LiveSplit.DXIW")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
