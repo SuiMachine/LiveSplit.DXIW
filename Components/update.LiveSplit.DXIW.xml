@@ -1,7 +1,7 @@
 <updates>
 <update version="1.0.0">
 <files>
-<file path="Components/LiveSplit.DXTF.dll" status="changed"/>
+<file path="Components/LiveSplit.DXIW.dll" status="changed"/>
 </files>
 <changelog>
 <change>Initial release.</change>
