@@ -1,7 +1,7 @@
 ﻿LiveSplit.DXIW v1.0.0
 =====================
 
-LiveSplit.DXIF is a [LiveSplit](http://livesplit.org/) component for Deus Ex: Invisible War (for real!).
+LiveSplit.DXIW is a [LiveSplit](http://livesplit.org/) component for Deus Ex: Invisible War (for real!).
 
 Features
 --------

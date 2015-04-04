@@ -1,4 +1,12 @@
 <updates>
+<update version="1.0.1">
+<files>
+<file path="Components/LiveSplit.DXIW.dll" status="changed"/>
+</files>
+<changelog>
+<change>Fixed typeo.</change>
+</changelog>
+</update>
 <update version="1.0.0">
 <files>
 <file path="Components/LiveSplit.DXIW.dll" status="changed"/>
