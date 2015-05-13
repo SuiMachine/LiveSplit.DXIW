@@ -1,4 +1,12 @@
 <updates>
+<update version="1.1.0">
+<files>
+<file path="Components/LiveSplit.DXIW.dll" status="changed"/>
+</files>
+<changelog>
+<change>Added 1s delay after catching the process in order to make up for false value that just got allocated.</change>
+</changelog>
+</update>
 <update version="1.0.1">
 <files>
 <file path="Components/LiveSplit.DXIW.dll" status="changed"/>

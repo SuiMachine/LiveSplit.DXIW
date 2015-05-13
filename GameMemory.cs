@@ -75,6 +75,7 @@ namespace LiveSplit.DXIW
                     bool isLoading;
                     bool prevIsLoading = false;
                     bool loadingStarted = false;
+                    uint simpleDelay = 62;                                                                                   //Counts down 62*15ms before it states there is no loading
 
                     Debug.WriteLine("[NoLoads] Waiting for DX2Main.exe...");
                     uint frameCounter = 0;
@@ -82,7 +83,7 @@ namespace LiveSplit.DXIW
                     Process game;
                     while ((game = GetGameProcess()) == null)
                     {
-                        isLoading = true;
+                        isLoading = true;                                                                                   //Required, because of the game killing process during loadings.
 
                         if (isLoading != prevIsLoading)
                         {
@@ -100,6 +101,7 @@ namespace LiveSplit.DXIW
                                         this.OnLoadStarted(this, EventArgs.Empty);
                                     }
                                 }, null);
+                                simpleDelay = 62;
                             }
                         }
 
@@ -117,44 +119,49 @@ namespace LiveSplit.DXIW
                     while (!game.HasExited)
                     {
                         _IsLoading.Deref(game, out isLoading);
-
-                        if (isLoading != prevIsLoading)
+                        if(simpleDelay==0)
                         {
-                            if (isLoading)
+                            if (isLoading != prevIsLoading)
                             {
-                                Debug.WriteLine(String.Format("[NoLoads] Load Start - {0}", frameCounter));
-
-                                loadingStarted = true;
-
-                                // pause game timer
-                                _uiThread.Post(d =>
+                                if (isLoading)
                                 {
-                                    if (this.OnLoadStarted != null)
-                                    {
-                                        this.OnLoadStarted(this, EventArgs.Empty);
-                                    }
-                                }, null);
-                            }
-                            else
-                            {
-                                Debug.WriteLine(String.Format("[NoLoads] Load End - {0}", frameCounter));
+                                    Debug.WriteLine(String.Format("[NoLoads] Load Start - {0}", frameCounter));
 
-                                if (loadingStarted)
-                                {
-                                    loadingStarted = false;
+                                    loadingStarted = true;
 
-                                    // unpause game timer
+                                    // pause game timer
                                     _uiThread.Post(d =>
                                     {
-                                        if (this.OnLoadFinished != null)
+                                        if (this.OnLoadStarted != null)
                                         {
-                                            this.OnLoadFinished(this, EventArgs.Empty);
+                                            this.OnLoadStarted(this, EventArgs.Empty);
                                         }
                                     }, null);
                                 }
+                                else
+                                {
+                                    Debug.WriteLine(String.Format("[NoLoads] Load End - {0}", frameCounter));
+
+                                    if (loadingStarted)
+                                    {
+                                        loadingStarted = false;
+
+                                        // unpause game timer
+                                        _uiThread.Post(d =>
+                                        {
+                                            if (this.OnLoadFinished != null)
+                                            {
+                                                this.OnLoadFinished(this, EventArgs.Empty);
+                                            }
+                                        }, null);
+                                    }
+                                }
                             }
                         }
-
+                        else
+                        {
+                            simpleDelay--;
+                        }
                         prevIsLoading = isLoading;
 
                         frameCounter++;
