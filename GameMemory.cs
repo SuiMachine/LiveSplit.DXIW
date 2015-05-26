@@ -22,7 +22,8 @@ namespace LiveSplit.DXIW
 
         private enum ExpectedDllSizes
         {
-            DXIW = 11948032,
+            DXIWGOG = 6922240,
+            DXIWSteam = 6930432,
         }
 
         public void resetSplitStates()
@@ -33,7 +34,6 @@ namespace LiveSplit.DXIW
         {
             resetSplitStates();
 
-            _IsLoading = new DeepPointer(0x5ED9B0);
             _ignorePIDs = new List<int>();
         }
 
@@ -190,13 +190,21 @@ namespace LiveSplit.DXIW
                 return null;
             }
 
-            /*if (game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXIW )
+            if (game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXIWSteam && game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXIWGOG)
             {
                 _ignorePIDs.Add(game.Id);
-                _uiThread.Send(d => MessageBox.Show("Unexpected game version. Deus Ex The Fall (1.1) is required.", "LiveSplit.DXIW",
+                _uiThread.Send(d => MessageBox.Show("Unexpected game version. Deus Ex Invisible War (1.2) on Steam or GOG is required.", "LiveSplit.DXIW",
                     MessageBoxButtons.OK, MessageBoxIcon.Error), null);
                 return null;
-            }*/
+            }
+            else if(game.MainModule.ModuleMemorySize == (int)ExpectedDllSizes.DXIWSteam)
+            {
+                _IsLoading = new DeepPointer(0x5EB9A0);
+            }
+            else if(game.MainModule.ModuleMemorySize == (int)ExpectedDllSizes.DXIWGOG)
+            {
+                _IsLoading = new DeepPointer(0x5ED9B0);
+            }
 
             return game;
         }
