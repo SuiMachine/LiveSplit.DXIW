@@ -16,7 +16,7 @@ Requirements
 
 Install
 -------
-Starting with LiveSplit 1.4, you can download and install LiveSplit.DXTF automatically from within the Splits Editor with just one click. Just type in "Deus Ex: Invisible War" and click Activate. This downloads LiveSplit.DXIW to the Components folder.
+Starting with LiveSplit 1.4, you can download and install LiveSplit.DXIW automatically from within the Splits Editor with just one click. Just type in "Deus Ex: Invisible War" and click Activate. This downloads LiveSplit.DXIW to the Components folder.
 
 If the plugin is not working with this process, download the plugin from the [releases page](https://github.com/SuiMachine/LiveSplit.DXIW/releases) and place the LiveSplit.DXIW.dll in your Components directory of LiveSplit.
 
