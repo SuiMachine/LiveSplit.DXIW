@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LiveSplit.ComponentUtil;
 
 namespace LiveSplit.DXIW
 {
@@ -102,6 +103,7 @@ namespace LiveSplit.DXIW
                                     }
                                 }, null);
                                 simpleDelay = 62;
+                                Trace.WriteLine("[NoLoads] Loadings, thread delay 62.");
                             }
                         }
 
@@ -190,18 +192,18 @@ namespace LiveSplit.DXIW
                 return null;
             }
 
-            if (game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXIWSteam && game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXIWGOG)
+            if (game.MainModuleWow64Safe().ModuleMemorySize != (int)ExpectedDllSizes.DXIWSteam && game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXIWGOG)
             {
                 _ignorePIDs.Add(game.Id);
                 _uiThread.Send(d => MessageBox.Show("Unexpected game version. Deus Ex Invisible War (1.2) on Steam or GOG is required.", "LiveSplit.DXIW",
                     MessageBoxButtons.OK, MessageBoxIcon.Error), null);
                 return null;
             }
-            else if(game.MainModule.ModuleMemorySize == (int)ExpectedDllSizes.DXIWSteam)
+            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWSteam)
             {
                 _IsLoading = new DeepPointer(0x5EB9A0);
             }
-            else if(game.MainModule.ModuleMemorySize == (int)ExpectedDllSizes.DXIWGOG)
+            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWGOG)
             {
                 _IsLoading = new DeepPointer(0x5ED9B0);
             }
