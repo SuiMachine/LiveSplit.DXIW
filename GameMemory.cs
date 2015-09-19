@@ -76,7 +76,7 @@ namespace LiveSplit.DXIW
                     bool isLoading = false;
                     bool prevIsLoading = false;
                     bool loadingStarted = false;
-                    uint simpleDelay = 186;                                                                                   //Counts down 62*15ms before it states there is no loading
+                    uint simpleDelay = 120;                                                                                   //Counts down 62*15ms before it states there is no loading
 
                     Trace.WriteLine("[NoLoads] Waiting for DX2Main.exe...");
                     uint frameCounter = 0;
@@ -102,8 +102,8 @@ namespace LiveSplit.DXIW
                                         this.OnLoadStarted(this, EventArgs.Empty);
                                     }
                                 }, null);
-                                simpleDelay = 186;
-                                Trace.WriteLine("[NoLoads] Loadings, thread delay 186.");
+                                simpleDelay = 120;
+                                Trace.WriteLine("[NoLoads] Loadings, thread delay 120.");
                             }
                         }
 
