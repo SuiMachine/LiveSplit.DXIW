@@ -1,4 +1,12 @@
 <updates>
+<update version="1.2.3">
+<files>
+<file path="Components/LiveSplit.DXIW.dll" status="changed"/>
+</files>
+<changelog>
+<change>Maybe try hiring a developer who knows how to program...</change>
+</changelog>
+</update>
 <update version="1.2.2">
 <files>
 <file path="Components/LiveSplit.DXIW.dll" status="changed"/>

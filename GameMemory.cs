@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LiveSplit.ComponentUtil;
 
 namespace LiveSplit.DXIW
 {
@@ -72,10 +73,10 @@ namespace LiveSplit.DXIW
             {
                 try
                 {
-                    bool isLoading;
+                    bool isLoading = false;
                     bool prevIsLoading = false;
                     bool loadingStarted = false;
-                    uint simpleDelay = 62;                                                                                   //Counts down 62*15ms before it states there is no loading
+                    uint simpleDelay = 186;                                                                                   //Counts down 62*15ms before it states there is no loading
 
                     Trace.WriteLine("[NoLoads] Waiting for DX2Main.exe...");
                     uint frameCounter = 0;
@@ -101,8 +102,8 @@ namespace LiveSplit.DXIW
                                         this.OnLoadStarted(this, EventArgs.Empty);
                                     }
                                 }, null);
-                                simpleDelay = 62;
-                                Trace.WriteLine("[NoLoads] Loadings, thread delay 62.");
+                                simpleDelay = 186;
+                                Trace.WriteLine("[NoLoads] Loadings, thread delay 186.");
                             }
                         }
 
@@ -119,9 +120,10 @@ namespace LiveSplit.DXIW
 
                     while (!game.HasExited)
                     {
-                        _IsLoading.Deref(game, out isLoading);
                         if(simpleDelay==0)
                         {
+                            _IsLoading.Deref(game, out isLoading);
+
                             if (isLoading != prevIsLoading)
                             {
                                 if (isLoading)
@@ -191,18 +193,18 @@ namespace LiveSplit.DXIW
                 return null;
             }
 
-            if (game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXIWSteam && game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXIWGOG)
+            if (game.MainModuleWow64Safe().ModuleMemorySize != (int)ExpectedDllSizes.DXIWSteam && game.MainModuleWow64Safe().ModuleMemorySize != (int)ExpectedDllSizes.DXIWGOG)
             {
                 _ignorePIDs.Add(game.Id);
                 _uiThread.Send(d => MessageBox.Show("Unexpected game version. Deus Ex Invisible War (1.2) on Steam or GOG is required.", "LiveSplit.DXIW",
                     MessageBoxButtons.OK, MessageBoxIcon.Error), null);
                 return null;
             }
-            else if (game.MainModule.ModuleMemorySize == (int)ExpectedDllSizes.DXIWSteam)
+            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWSteam)
             {
                 _IsLoading = new DeepPointer(0x5EB9A0);
             }
-            else if (game.MainModule.ModuleMemorySize == (int)ExpectedDllSizes.DXIWGOG)
+            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWGOG)
             {
                 _IsLoading = new DeepPointer(0x5ED9B0);
             }
