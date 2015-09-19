@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using LiveSplit.ComponentUtil;
 
 namespace LiveSplit.DXIW
 {
@@ -67,7 +66,7 @@ namespace LiveSplit.DXIW
 
         void MemoryReadThread()
         {
-            Debug.WriteLine("[NoLoads] MemoryReadThread");
+            Trace.WriteLine("[NoLoads] MemoryReadThread");
 
             while (!_cancelSource.IsCancellationRequested)
             {
@@ -78,7 +77,7 @@ namespace LiveSplit.DXIW
                     bool loadingStarted = false;
                     uint simpleDelay = 62;                                                                                   //Counts down 62*15ms before it states there is no loading
 
-                    Debug.WriteLine("[NoLoads] Waiting for DX2Main.exe...");
+                    Trace.WriteLine("[NoLoads] Waiting for DX2Main.exe...");
                     uint frameCounter = 0;
                     
                     Process game;
@@ -90,7 +89,7 @@ namespace LiveSplit.DXIW
                         {
                             if (isLoading)
                             {
-                                Debug.WriteLine(String.Format("[NoLoads] Load Start - {0}", frameCounter));
+                                Trace.WriteLine(String.Format("[NoLoads] Load Start - {0}", frameCounter));
 
                                 loadingStarted = true;
 
@@ -116,7 +115,7 @@ namespace LiveSplit.DXIW
                         prevIsLoading = isLoading;
                     }
 
-                    Debug.WriteLine("[NoLoads] Got games process!");
+                    Trace.WriteLine("[NoLoads] Got games process!");
 
                     while (!game.HasExited)
                     {
@@ -127,7 +126,7 @@ namespace LiveSplit.DXIW
                             {
                                 if (isLoading)
                                 {
-                                    Debug.WriteLine(String.Format("[NoLoads] Load Start - {0}", frameCounter));
+                                    Trace.WriteLine(String.Format("[NoLoads] Load Start - {0}", frameCounter));
 
                                     loadingStarted = true;
 
@@ -142,7 +141,7 @@ namespace LiveSplit.DXIW
                                 }
                                 else
                                 {
-                                    Debug.WriteLine(String.Format("[NoLoads] Load End - {0}", frameCounter));
+                                    Trace.WriteLine(String.Format("[NoLoads] Load End - {0}", frameCounter));
 
                                     if (loadingStarted)
                                     {
@@ -178,7 +177,7 @@ namespace LiveSplit.DXIW
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(ex.ToString());
+                    Trace.WriteLine(ex.ToString());
                     Thread.Sleep(1000);
                 }
             }
@@ -192,18 +191,18 @@ namespace LiveSplit.DXIW
                 return null;
             }
 
-            if (game.MainModuleWow64Safe().ModuleMemorySize != (int)ExpectedDllSizes.DXIWSteam && game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXIWGOG)
+            if (game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXIWSteam && game.MainModule.ModuleMemorySize != (int)ExpectedDllSizes.DXIWGOG)
             {
                 _ignorePIDs.Add(game.Id);
                 _uiThread.Send(d => MessageBox.Show("Unexpected game version. Deus Ex Invisible War (1.2) on Steam or GOG is required.", "LiveSplit.DXIW",
                     MessageBoxButtons.OK, MessageBoxIcon.Error), null);
                 return null;
             }
-            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWSteam)
+            else if (game.MainModule.ModuleMemorySize == (int)ExpectedDllSizes.DXIWSteam)
             {
                 _IsLoading = new DeepPointer(0x5EB9A0);
             }
-            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWGOG)
+            else if (game.MainModule.ModuleMemorySize == (int)ExpectedDllSizes.DXIWGOG)
             {
                 _IsLoading = new DeepPointer(0x5ED9B0);
             }

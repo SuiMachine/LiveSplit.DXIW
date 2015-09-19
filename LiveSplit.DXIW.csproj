@@ -46,6 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeepPointer.cs" />
     <Compile Include="DXIWComponent.cs" />
     <Compile Include="DXIWFactory.cs" />
     <Compile Include="DXIWSettings.cs">
@@ -61,6 +62,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SafeNativeMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DXIWSettings.resx">

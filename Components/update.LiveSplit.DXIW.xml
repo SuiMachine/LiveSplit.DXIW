@@ -1,4 +1,12 @@
 <updates>
+<update version="1.2.2">
+<files>
+<file path="Components/LiveSplit.DXIW.dll" status="changed"/>
+</files>
+<changelog>
+<change>Reverted changes, as SafeMethods forced by 1.6 are not reliable enough.</change>
+</changelog>
+</update>
 <update version="1.2.1">
 <files>
 <file path="Components/LiveSplit.DXIW.dll" status="changed"/>
