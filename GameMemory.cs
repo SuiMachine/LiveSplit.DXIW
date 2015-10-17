@@ -11,6 +11,10 @@ namespace LiveSplit.DXIW
 {
     class GameMemory
     {
+        public bool isSteam;
+
+        public event EventHandler OnFirstLevelLoading;
+        public event EventHandler OnPlayerGainedControl;
         public event EventHandler OnLoadStarted;
         public event EventHandler OnLoadFinished;
 
@@ -18,22 +22,22 @@ namespace LiveSplit.DXIW
         private CancellationTokenSource _cancelSource;
         private SynchronizationContext _uiThread;
         private List<int> _ignorePIDs;
+        private DXIWSettings _settings;
 
-        private DeepPointer _IsLoading;
+        private DeepPointer _isLoadingPtr;
+        const int baseAddress = 0x00400000;
 
         private enum ExpectedDllSizes
         {
-            DXIWGOG = 6922240,
-            DXIWSteam = 6930432,
+            GOG = 6922240,
+            Steam = 6930432
         }
 
-        public void resetSplitStates()
-        {
-        }
+        public bool[] splitStates { get; set; }
 
         public GameMemory(DXIWSettings componentSettings)
         {
-            resetSplitStates();
+            _settings = componentSettings;
 
             _ignorePIDs = new List<int>();
         }
@@ -65,38 +69,53 @@ namespace LiveSplit.DXIW
             _thread.Wait();
         }
 
+        bool isLoading = false;
+        bool prevIsLoading = false;
+        bool loadingStarted = false;
+        uint delay = 62;
+
         void MemoryReadThread()
         {
-            Trace.WriteLine("[NoLoads] MemoryReadThread");
+            Debug.WriteLine("[NoLoads] MemoryReadThread");
 
             while (!_cancelSource.IsCancellationRequested)
             {
                 try
                 {
+<<<<<<< HEAD
+                    Debug.WriteLine("[NoLoads] Waiting for dx2main.exe...");
+=======
                     bool isLoading = false;
                     bool prevIsLoading = false;
                     bool loadingStarted = false;
                     uint simpleDelay = 120;                                                                                   //Counts down 62*15ms before it states there is no loading
+>>>>>>> origin/master
 
-                    Trace.WriteLine("[NoLoads] Waiting for DX2Main.exe...");
-                    uint frameCounter = 0;
-                    
                     Process game;
                     while ((game = GetGameProcess()) == null)
                     {
-                        isLoading = true;                                                                                   //Required, because of the game killing process during loadings.
-
-                        if (isLoading != prevIsLoading)
+                        delay = 90;
+                        Thread.Sleep(250);
+                        if (_cancelSource.IsCancellationRequested)
                         {
-                            if (isLoading)
+                            return;
+                        }
+
+                        isLoading = true;
+                        if(isLoading != prevIsLoading)
+                        {
+                            loadingStarted = true;
+
+                            // pause game timer
+                            _uiThread.Post(d =>
                             {
-                                Trace.WriteLine(String.Format("[NoLoads] Load Start - {0}", frameCounter));
-
-                                loadingStarted = true;
-
-                                // pause game timer
-                                _uiThread.Post(d =>
+                                if (this.OnLoadStarted != null)
                                 {
+<<<<<<< HEAD
+                                    this.OnLoadStarted(this, EventArgs.Empty);
+                                }
+                            }, null);
+=======
                                     if (this.OnLoadStarted != null)
                                     {
                                         this.OnLoadStarted(this, EventArgs.Empty);
@@ -105,30 +124,42 @@ namespace LiveSplit.DXIW
                                 simpleDelay = 120;
                                 Trace.WriteLine("[NoLoads] Loadings, thread delay 120.");
                             }
+>>>>>>> origin/master
                         }
 
-                        Thread.Sleep(250);
-                        if (_cancelSource.IsCancellationRequested)
-                        {
-                            return;
-                        }
+                        prevIsLoading = true;
 
-                        prevIsLoading = isLoading;
                     }
 
-                    Trace.WriteLine("[NoLoads] Got games process!");
+                    Debug.WriteLine("[NoLoads] Got games process!");
+
+                    uint frameCounter = 0;
 
                     while (!game.HasExited)
                     {
+<<<<<<< HEAD
+                        if(delay == 0)
+                        {
+                            if(_settings.UseNonSafeMemoryReading)
+                            {   //You've seen nothing!!!!!
+                                if(isSteam)
+                                    isLoading = Convert.ToBoolean(Trainer.ReadByte(game, baseAddress + 0x5EB9A0));
+                                else
+                                    isLoading = Convert.ToBoolean(Trainer.ReadByte(game, baseAddress + 0x5ED9B0));
+                            }
+                            else
+                                _isLoadingPtr.Deref(game, out isLoading);
+=======
                         if(simpleDelay==0)
                         {
                             _IsLoading.Deref(game, out isLoading);
+>>>>>>> origin/master
 
                             if (isLoading != prevIsLoading)
                             {
                                 if (isLoading)
                                 {
-                                    Trace.WriteLine(String.Format("[NoLoads] Load Start - {0}", frameCounter));
+                                    Debug.WriteLine(String.Format("[NoLoads] Load Start - {0}", frameCounter));
 
                                     loadingStarted = true;
 
@@ -143,7 +174,7 @@ namespace LiveSplit.DXIW
                                 }
                                 else
                                 {
-                                    Trace.WriteLine(String.Format("[NoLoads] Load End - {0}", frameCounter));
+                                    Debug.WriteLine(String.Format("[NoLoads] Load End - {0}", frameCounter));
 
                                     if (loadingStarted)
                                     {
@@ -160,53 +191,81 @@ namespace LiveSplit.DXIW
                                     }
                                 }
                             }
+
+                            prevIsLoading = isLoading;
+                            frameCounter++;
+
+                            Thread.Sleep(15);
+
+                            if (_cancelSource.IsCancellationRequested)
+                            {
+                                return;
+                            }
                         }
                         else
                         {
-                            simpleDelay--;
-                        }
-                        prevIsLoading = isLoading;
-
-                        frameCounter++;
-
-                        Thread.Sleep(15);
-
-                        if (_cancelSource.IsCancellationRequested)
-                        {
-                            return;
+                            prevIsLoading = isLoading;
+                            frameCounter++;
+                            delay--;
+                            Thread.Sleep(15);
                         }
                     }
+
+                    // pause game timer on exit or crash
+                    _uiThread.Post(d =>
+                    {
+                        if (this.OnLoadStarted != null)
+                        {
+                            this.OnLoadStarted(this, EventArgs.Empty);
+                        }
+                    }, null);
+                    isLoading = true;
                 }
                 catch (Exception ex)
                 {
-                    Trace.WriteLine(ex.ToString());
+                    Debug.WriteLine(ex.ToString());
                     Thread.Sleep(1000);
                 }
             }
         }
 
+
         Process GetGameProcess()
         {
-            Process game = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.ToLower() == "dx2main" && !p.HasExited && !_ignorePIDs.Contains(p.Id));
+            Process game = Process.GetProcesses().FirstOrDefault(p => (p.ProcessName.ToLower() == "dx2main") && !p.HasExited && !_ignorePIDs.Contains(p.Id));
             if (game == null)
             {
                 return null;
             }
 
+<<<<<<< HEAD
+            if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.Steam)
+=======
             if (game.MainModuleWow64Safe().ModuleMemorySize != (int)ExpectedDllSizes.DXIWSteam && game.MainModuleWow64Safe().ModuleMemorySize != (int)ExpectedDllSizes.DXIWGOG)
+>>>>>>> origin/master
+            {
+                isSteam = true;
+                _isLoadingPtr = new DeepPointer(0x5EB9A0);  // == 1 if a loadscreen is happening
+            }
+<<<<<<< HEAD
+            else if(game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.GOG)  //GOG version
+=======
+            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWSteam)
+>>>>>>> origin/master
+            {
+                isSteam = false;
+                _isLoadingPtr = new DeepPointer(0x5ED9B0);  // == 1 if a loadscreen is happening
+            }
+<<<<<<< HEAD
+            else
+=======
+            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWGOG)
+>>>>>>> origin/master
             {
                 _ignorePIDs.Add(game.Id);
-                _uiThread.Send(d => MessageBox.Show("Unexpected game version. Deus Ex Invisible War (1.2) on Steam or GOG is required.", "LiveSplit.DXIW",
+                _uiThread.Send(d => MessageBox.Show("Unexpected game version. DXIW Steam or GOG is required.", "LiveSplit.DXIW",
                     MessageBoxButtons.OK, MessageBoxIcon.Error), null);
                 return null;
-            }
-            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWSteam)
-            {
-                _IsLoading = new DeepPointer(0x5EB9A0);
-            }
-            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWGOG)
-            {
-                _IsLoading = new DeepPointer(0x5ED9B0);
             }
 
             return game;

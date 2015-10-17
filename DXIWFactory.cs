@@ -20,7 +20,7 @@ namespace LiveSplit.DXIW
 
         public string Description
         {
-            get { return "Automates loading removal for Deus Ex: Invisible War."; }
+            get { return "Automates load removal for DXIW."; }
         }
 
         public ComponentCategory Category
