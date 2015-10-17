@@ -224,13 +224,6 @@ namespace LiveSplit.DXIW
                 isSteam = false;
                 _isLoadingPtr = new DeepPointer(0x5ED9B0);  // == 1 if a loadscreen is happening
             }
-            else
-            {
-                _ignorePIDs.Add(game.Id);
-                _uiThread.Send(d => MessageBox.Show("Unexpected game version. DXIW Steam or GOG is required.", "LiveSplit.DXIW",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error), null);
-                return null;
-            }
 
             return game;
         }

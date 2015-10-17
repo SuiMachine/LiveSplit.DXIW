@@ -1,4 +1,12 @@
 <updates>
+<update version="1.3.1">
+<files>
+<file path="Components/LiveSplit.DXIW.dll" status="changed"/>
+</files>
+<changelog>
+<change>Disabled ProcessLenght checking, since it sometimes caused issues (blame DXIW!).</change>
+</changelog>
+</update>
 <update version="1.3.0">
 <files>
 <file path="Components/LiveSplit.DXIW.dll" status="changed"/>
