@@ -82,14 +82,7 @@ namespace LiveSplit.DXIW
             {
                 try
                 {
-<<<<<<< HEAD
                     Debug.WriteLine("[NoLoads] Waiting for dx2main.exe...");
-=======
-                    bool isLoading = false;
-                    bool prevIsLoading = false;
-                    bool loadingStarted = false;
-                    uint simpleDelay = 120;                                                                                   //Counts down 62*15ms before it states there is no loading
->>>>>>> origin/master
 
                     Process game;
                     while ((game = GetGameProcess()) == null)
@@ -111,20 +104,9 @@ namespace LiveSplit.DXIW
                             {
                                 if (this.OnLoadStarted != null)
                                 {
-<<<<<<< HEAD
                                     this.OnLoadStarted(this, EventArgs.Empty);
                                 }
                             }, null);
-=======
-                                    if (this.OnLoadStarted != null)
-                                    {
-                                        this.OnLoadStarted(this, EventArgs.Empty);
-                                    }
-                                }, null);
-                                simpleDelay = 120;
-                                Trace.WriteLine("[NoLoads] Loadings, thread delay 120.");
-                            }
->>>>>>> origin/master
                         }
 
                         prevIsLoading = true;
@@ -137,7 +119,6 @@ namespace LiveSplit.DXIW
 
                     while (!game.HasExited)
                     {
-<<<<<<< HEAD
                         if(delay == 0)
                         {
                             if(_settings.UseNonSafeMemoryReading)
@@ -149,11 +130,6 @@ namespace LiveSplit.DXIW
                             }
                             else
                                 _isLoadingPtr.Deref(game, out isLoading);
-=======
-                        if(simpleDelay==0)
-                        {
-                            _IsLoading.Deref(game, out isLoading);
->>>>>>> origin/master
 
                             if (isLoading != prevIsLoading)
                             {
@@ -238,29 +214,17 @@ namespace LiveSplit.DXIW
                 return null;
             }
 
-<<<<<<< HEAD
             if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.Steam)
-=======
-            if (game.MainModuleWow64Safe().ModuleMemorySize != (int)ExpectedDllSizes.DXIWSteam && game.MainModuleWow64Safe().ModuleMemorySize != (int)ExpectedDllSizes.DXIWGOG)
->>>>>>> origin/master
             {
                 isSteam = true;
                 _isLoadingPtr = new DeepPointer(0x5EB9A0);  // == 1 if a loadscreen is happening
             }
-<<<<<<< HEAD
             else if(game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.GOG)  //GOG version
-=======
-            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWSteam)
->>>>>>> origin/master
             {
                 isSteam = false;
                 _isLoadingPtr = new DeepPointer(0x5ED9B0);  // == 1 if a loadscreen is happening
             }
-<<<<<<< HEAD
             else
-=======
-            else if (game.MainModuleWow64Safe().ModuleMemorySize == (int)ExpectedDllSizes.DXIWGOG)
->>>>>>> origin/master
             {
                 _ignorePIDs.Add(game.Id);
                 _uiThread.Send(d => MessageBox.Show("Unexpected game version. DXIW Steam or GOG is required.", "LiveSplit.DXIW",

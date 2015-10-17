@@ -61,11 +61,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-<<<<<<< HEAD
     <Compile Include="SafeNativeMethods.cs" />
     <Compile Include="Trainer.cs" />
-=======
->>>>>>> origin/master
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DXIWSettings.resx">
